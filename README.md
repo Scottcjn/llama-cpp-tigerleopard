@@ -129,7 +129,10 @@ If this helped you, please:
 ## Credits
 
 - [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) - Original project
-- [Elyan Labs](https://github.com/Scottcjn) - PowerPC/Tiger/Leopard port
+- **Scott (Scottcjn)** - Creator, architect, hardware lab, PowerPC/Tiger/Leopard port
+- **Claude (Opus 4.1/4.5)** - Implementation assistance
+
+*Designed by Scott, coded with Claude*
 
 ## License
 
