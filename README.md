@@ -110,6 +110,22 @@ This build is part of the Sophiacord distributed AI system, which runs across:
 
 Learn more: https://github.com/Scottcjn
 
+## Attribution
+
+**A year of development, real hardware, electricity bills, and a dedicated lab went into this.**
+
+If you use this project, please give credit:
+
+```
+llama.cpp Tiger/Leopard Port by Scott (Scottcjn)
+https://github.com/Scottcjn/llama-cpp-tigerleopard
+```
+
+If this helped you, please:
+- ⭐ **Star this repo** - It helps others find it
+- 📝 **Credit in your project** - Keep the attribution
+- 🔗 **Link back** - Share the love
+
 ## Credits
 
 - [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) - Original project
@@ -117,8 +133,10 @@ Learn more: https://github.com/Scottcjn
 
 ## License
 
-MIT License (same as llama.cpp)
+MIT License (same as llama.cpp) - Free to use, but please keep the copyright notice and attribution.
 
 ---
 
 *"Your 2005 Power Mac is now an AI. The future is vintage."*
+
+**Running LLMs on 20-year-old hardware. Vintage computing meets modern AI.**
