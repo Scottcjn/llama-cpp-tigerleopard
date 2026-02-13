@@ -168,3 +168,10 @@ The clone-to-star ratio is the purest form of underground validation. We see you
 
 <!-- Analytics -->
 ![](http://50.28.86.131:9090/pixel/llama-cpp-tigerleopard.gif)
+
+
+## 中文简介
+
+Elyan Labs POWER8/PowerPC 项目 - 为 IBM POWER 系统和复古 Mac 提供现代 AI 支持。
+
+Contributed by eelaine-wzw
