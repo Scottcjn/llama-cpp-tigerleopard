@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/llama.cpp_source"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "11:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "pip"
+    directory: "/llama.cpp_source/gguf-py"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "11:30"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
