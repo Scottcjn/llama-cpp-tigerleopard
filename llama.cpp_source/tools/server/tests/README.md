@@ -57,7 +57,7 @@ To run a single test:
 ./tests.sh unit/test_chat_completion.py::test_invalid_chat_completion_req
 ```
 
-Hint: You can compile and run test in single command, useful for local developement:
+Hint: You can compile and run test in single command, useful for local development:
 
 ```shell
 cmake --build build -j --target llama-server && ./tools/server/tests/tests.sh
@@ -66,7 +66,7 @@ cmake --build build -j --target llama-server && ./tools/server/tests/tests.sh
 To see all available arguments, please refer to [pytest documentation](https://docs.pytest.org/en/stable/how-to/usage.html)
 
 ### Debugging external llama-server
-It can sometimes be useful to run the server in a debugger when invesigating test
+It can sometimes be useful to run the server in a debugger when investigating test
 failures. To do this, the environment variable `DEBUG_EXTERNAL=1` can be set
 which will cause the test to skip starting a llama-server itself. Instead, the
 server can be started in a debugger.

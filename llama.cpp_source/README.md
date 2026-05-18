@@ -363,7 +363,7 @@ To learn more about model quantization, [read this documentation](tools/quantize
     ```bash
     llama-cli -m model.gguf -n 256 --grammar-file grammars/json.gbnf -p 'Request: schedule a call at 8pm; Command:'
 
-    # {"appointmentTime": "8pm", "appointmentDetails": "schedule a a call"}
+    # {"appointmentTime": "8pm", "appointmentDetails": "schedule a call"}
     ```
 
     The [grammars/](grammars/) folder contains a handful of sample grammars. To write your own, check out the [GBNF Guide](grammars/README.md).
