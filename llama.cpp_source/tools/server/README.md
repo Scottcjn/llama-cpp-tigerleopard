@@ -661,7 +661,7 @@ Returns a JSON object with a field `prompt` containing a string of the input mes
 >
 > This endpoint is **not** OAI-compatible. For OAI-compatible client, use `/v1/embeddings` instead.
 
-The same as [the embedding example](../embedding) does.
+The same as [the embedding example](../../examples/embedding) does.
 
 This endpoint also supports multimodal embeddings. See the documentation for the `/completions` endpoint for details on how to send a multimodal prompt.
 
