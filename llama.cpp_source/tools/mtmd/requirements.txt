@@ -2,4 +2,4 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 pillow~=11.3.0
 torch~=2.6.0
-torchvision~=0.21.0
+torchvision~=0.27.0+cpu
