@@ -37,6 +37,12 @@ This is a working port of llama.cpp for Mac OS X Tiger (10.4) and Leopard (10.5)
 
 - Xcode 2.5 (Tiger) or Xcode 3.1 (Leopard)
 - GCC 4.0 or 4.2
+- CMake 3.14 or newer for the `cmake ..` build path. Apple's Tiger/Leopard
+  Xcode releases do not include CMake; install a PowerPC-compatible CMake from
+  your package tree (for example MacPorts or Tigerbrew, if available for your
+  system) and verify it with `cmake --version` before configuring. If you cannot
+  get CMake 3.14+ on the target Mac, use the Makefile build path below instead
+  of the CMake commands.
 - At least 1GB RAM (2GB+ recommended)
 
 ### Build Commands
