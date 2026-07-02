@@ -37,13 +37,59 @@ This is a working port of llama.cpp for Mac OS X Tiger (10.4) and Leopard (10.5)
 
 - Xcode 2.5 (Tiger) or Xcode 3.1 (Leopard)
 - GCC 4.0 or 4.2
-- CMake 3.14 or newer for the `cmake ..` build path. Apple's Tiger/Leopard
-  Xcode releases do not include CMake; install a PowerPC-compatible CMake from
-  your package tree (for example MacPorts or Tigerbrew, if available for your
-  system) and verify it with `cmake --version` before configuring. If you cannot
-  get CMake 3.14+ on the target Mac, use the Makefile build path below instead
-  of the CMake commands.
+- CMake 3.14 or newer. This is required, not optional. `llama.cpp_source/CMakeLists.txt`
+  starts with `cmake_minimum_required(VERSION 3.14)`, and the old plain-`make` build
+  was removed upstream (the Makefile in the tree is now just a stub that prints an
+  error). There is no working no-CMake path. Apple's Tiger/Leopard Xcode does not
+  ship CMake, so see "Getting CMake 3.14+ on PowerPC Tiger/Leopard" below to get a
+  prebuilt one that works.
 - At least 1GB RAM (2GB+ recommended)
+
+### Getting CMake 3.14+ on PowerPC Tiger/Leopard
+
+You do not have to build CMake yourself, and you do not need MacPorts (its PowerPC
+support has stalled). There is a prebuilt CMake 3.16.9 for Tiger/Leopard PPC in the
+sibling repo, built and tested on real G4/G5 hardware:
+
+```bash
+# Download the prebuilt CMake 3.16.9 (ppc, self-contained)
+curl -LO https://github.com/Scottcjn/tiger-macports/raw/main/binaries/kit-cmake-3.16.9-tiger-ppc.tar.gz
+
+# Extract over /usr/local (it lays down /usr/local/bin/cmake and /usr/local/share/cmake-3.16)
+cd /usr/local
+sudo tar xzf ~/kit-cmake-3.16.9-tiger-ppc.tar.gz
+
+# Make sure /usr/local/bin is ahead of anything older on PATH, then verify
+export PATH=/usr/local/bin:$PATH
+cmake --version
+# cmake version 3.16.9
+```
+
+This binary is `ppc_7400` (G4) Mach-O and runs on both G4 and G5. Its C++ runtime is
+linked in statically, so it does not need any extra libraries to run. If for some
+reason `cmake` complains about a missing `libstdc++`/`libgcc_s`, install the GCC 10
+runtime from [ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) and add
+`export DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib` before running it.
+
+Note: the CMake 2.8.12 release in `ppc-tiger-tools` is too old for llama.cpp (it is
+below the 3.14 minimum). Use the 3.16.9 kit above.
+
+If you would rather build CMake from source on the Mac itself, CMake bootstraps with
+just a C++ compiler (no CMake needed to build CMake). With GCC 10 from
+[ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) installed:
+
+```bash
+# CMake 3.16.x bootstraps cleanly with GCC 10 on Leopard PPC
+curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.9/cmake-3.16.9.tar.gz
+tar xzf cmake-3.16.9.tar.gz && cd cmake-3.16.9
+export DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib
+CC=/usr/local/gcc-10/bin/gcc CXX=/usr/local/gcc-10/bin/g++ ./bootstrap --parallel=2
+make -j2 && sudo env DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib make install
+```
+
+One known gotcha when building CMake from source with GCC 10: `Source/cmMachO.h`
+needs `#include <memory>` added at the top (GCC 10 is stricter about it). The
+prebuilt kit above already has this fixed, which is why it is the easier path.
 
 ### Build Commands
 
@@ -68,15 +114,20 @@ cmake .. \
 make -j2
 ```
 
-### Alternative: Makefile Build
+### Note on the old Makefile build (does not work anymore)
 
-```bash
-# For G4
-make CFLAGS="-mcpu=7450 -maltivec -O3" CXXFLAGS="-mcpu=7450 -maltivec -O3"
+Older llama.cpp guides told you to run `make CFLAGS=...` with no CMake. That path is
+gone. The `Makefile` in `llama.cpp_source` is now a deprecation stub, so running
+`make` there just prints:
 
-# For G5
-make CFLAGS="-mcpu=970 -maltivec -O3" CXXFLAGS="-mcpu=970 -maltivec -O3"
 ```
+Build system changed:
+The Makefile build has been replaced by CMake.
+```
+
+That error is expected. It is not a bug in this port, it is upstream removing the old
+build system. CMake 3.14+ is the only supported way to build now, so use the CMake
+commands above with the CMake you installed in the previous section.
 
 ## Running Inference
 
