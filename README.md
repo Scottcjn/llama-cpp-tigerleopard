@@ -41,45 +41,30 @@ This is a working port of llama.cpp for Mac OS X Tiger (10.4) and Leopard (10.5)
   starts with `cmake_minimum_required(VERSION 3.14)`, and the old plain-`make` build
   was removed upstream (the Makefile in the tree is now just a stub that prints an
   error). There is no working no-CMake path. Apple's Tiger/Leopard Xcode does not
-  ship CMake, so see "Getting CMake 3.14+ on PowerPC Tiger/Leopard" below to get a
-  prebuilt one that works.
+  ship CMake, so see "Getting CMake 3.14+ on PowerPC Tiger/Leopard" below to build
+  one on your own Mac.
 - At least 1GB RAM (2GB+ recommended)
 
 ### Getting CMake 3.14+ on PowerPC Tiger/Leopard
 
-You do not have to build CMake yourself, and you do not need MacPorts (its PowerPC
-support has stalled). There is a prebuilt CMake 3.16.9 for Tiger/Leopard PPC in the
-sibling repo, built and tested on real G4/G5 hardware:
+> **Status update (2026-07):** the prebuilt CMake 3.16.9 kit below has been reported
+> broken on real hardware on both OS versions: `dyld: Symbol not found: _fcntl`
+> against `libSystem.B.dylib` on Tiger 10.4, and pointer/memory allocation errors on
+> Leopard 10.5. Until that binary is rebuilt and re-verified, **build CMake from
+> source directly on the Mac you intend to use it on** (see below). That path only
+> depends on your own machine's compiler and libraries, so it does not carry the
+> same cross-OS risk as a single binary shared between Tiger and Leopard.
 
-```bash
-# Download the prebuilt CMake 3.16.9 (ppc, self-contained)
-curl -LO https://github.com/Scottcjn/tiger-macports/raw/main/binaries/kit-cmake-3.16.9-tiger-ppc.tar.gz
-
-# Extract over /usr/local (it lays down /usr/local/bin/cmake and /usr/local/share/cmake-3.16)
-cd /usr/local
-sudo tar xzf ~/kit-cmake-3.16.9-tiger-ppc.tar.gz
-
-# Make sure /usr/local/bin is ahead of anything older on PATH, then verify
-export PATH=/usr/local/bin:$PATH
-cmake --version
-# cmake version 3.16.9
-```
-
-This binary is `ppc_7400` (G4) Mach-O and runs on both G4 and G5. Its C++ runtime is
-linked in statically, so it does not need any extra libraries to run. If for some
-reason `cmake` complains about a missing `libstdc++`/`libgcc_s`, install the GCC 10
-runtime from [ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) and add
-`export DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib` before running it.
-
-Note: the CMake 2.8.12 release in `ppc-tiger-tools` is too old for llama.cpp (it is
-below the 3.14 minimum). Use the 3.16.9 kit above.
-
-If you would rather build CMake from source on the Mac itself, CMake bootstraps with
-just a C++ compiler (no CMake needed to build CMake). With GCC 10 from
+You do not need MacPorts for this (its PowerPC support has stalled), and you do not
+need to hand-write a CMakeLists patch. CMake bootstraps with just a C++ compiler, no
+CMake required to build CMake. With GCC 10 from
 [ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) installed:
 
 ```bash
-# CMake 3.16.x bootstraps cleanly with GCC 10 on Leopard PPC
+# CMake 3.16.9 is the version verified to bootstrap against llama.cpp's
+# cmake_minimum_required(VERSION 3.14) floor. Build it on THIS machine,
+# for THIS OS version, do not copy the resulting binary to a different
+# Tiger/Leopard machine or OS version.
 curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.9/cmake-3.16.9.tar.gz
 tar xzf cmake-3.16.9.tar.gz && cd cmake-3.16.9
 export DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib
@@ -87,9 +72,52 @@ CC=/usr/local/gcc-10/bin/gcc CXX=/usr/local/gcc-10/bin/g++ ./bootstrap --paralle
 make -j2 && sudo env DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib make install
 ```
 
+A full build takes a while on real PowerPC hardware (expect it to run well past an
+hour on a G4), so start it and come back rather than assuming it hung.
+
 One known gotcha when building CMake from source with GCC 10: `Source/cmMachO.h`
-needs `#include <memory>` added at the top (GCC 10 is stricter about it). The
-prebuilt kit above already has this fixed, which is why it is the easier path.
+needs `#include <memory>` added at the top (GCC 10 is stricter about missing
+standard-library includes than the old Apple GCC was). If `./bootstrap` or `make`
+fails complaining about `std::unique_ptr` or similar in `cmMachO.h`, add that include
+and re-run `make`.
+
+After install, confirm the version before moving on:
+
+```bash
+export PATH=/usr/local/bin:$PATH
+cmake --version
+# cmake version 3.16.9
+```
+
+#### Prebuilt CMake kit (currently unreliable, use with caution)
+
+There is also a prebuilt CMake 3.16.9 tarball for Tiger/Leopard PPC in the sibling
+repo. It was built and tested on real G4/G5 hardware at the time, but has since been
+reported to fail on other real Tiger and Leopard machines (see the status note
+above), most likely because it is one binary being asked to run against two
+different OS versions' `libSystem`, which have different symbol layouts. Try it only
+if building from source is not an option for you, and expect to fall back to the
+from-source path above if it does not work:
+
+```bash
+curl -LO https://github.com/Scottcjn/tiger-macports/raw/main/binaries/kit-cmake-3.16.9-tiger-ppc.tar.gz
+cd /usr/local
+sudo tar xzf ~/kit-cmake-3.16.9-tiger-ppc.tar.gz
+export PATH=/usr/local/bin:$PATH
+cmake --version
+```
+
+If it complains about a missing `libstdc++`/`libgcc_s`, install the GCC 10 runtime
+from [ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) and add
+`export DYLD_LIBRARY_PATH=/usr/local/gcc-10/lib` before running it. If instead you
+hit `dyld: Symbol not found` on Tiger or pointer/allocation crashes on Leopard, that
+is the known issue above, not something wrong on your end. Please build from source
+instead and, if you can, file the exact error output as a comment on
+[issue #25](https://github.com/Scottcjn/llama-cpp-tigerleopard/issues/25) so the
+prebuilt kit itself can get fixed.
+
+Note: the CMake 2.8.12 release in `ppc-tiger-tools` is too old for llama.cpp (it is
+below the 3.14 minimum). Do not use it for this build.
 
 ### Build Commands
 
