@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "llama.cpp for Mac OS X Tiger and Leopard (PowerPC G4/G5)"
+abstract: "Port of llama.cpp to Mac OS X Tiger 10.4 and Leopard 10.5 on PowerPC G4/G5."
+type: software
+authors:
+  - family-names: Boudreaux
+    given-names: Scott
+    affiliation: "Elyan Labs"
+repository-code: "https://github.com/Scottcjn/llama-cpp-tigerleopard"
+url: "https://github.com/Scottcjn/llama-cpp-tigerleopard"
+license: Apache-2.0
+version: 1.0.0
+date-released: 2026-01-01
+preferred-citation:
+  type: software
+  authors:
+    - family-names: Boudreaux
+      given-names: Scott
+      affiliation: "Elyan Labs"
+  title: "llama.cpp on Mac OS X Tiger and Leopard (PowerPC G4/G5)"
+  doi: "10.5281/zenodo.21435968"
+  year: 2026
+  month: 7

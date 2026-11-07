@@ -1,7 +1,7 @@
 # llama.cpp for Mac OS X Tiger & Leopard (PowerPC G4/G5)
 
 [![BCOS Certified](https://img.shields.io/badge/BCOS-Certified-brightgreen?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAxTDMgNXY2YzAgNS41NSAzLjg0IDEwLjc0IDkgMTIgNS4xNi0xLjI2IDktNi40NSA5LTEyVjVsLTktNHptLTIgMTZsLTQtNCA1LjQxLTUuNDEgMS40MSAxLjQxTDEwIDE0bDYtNiAxLjQxIDEuNDFMMTAgMTd6Ii8+PC9zdmc+)](BCOS.md)
-**WORLD FIRST: LLM Inference on Classic Mac OS X PowerPC!**
+**LLM inference on classic Mac OS X (Tiger and Leopard) on PowerPC.**
 
 This is a working port of llama.cpp for Mac OS X Tiger (10.4) and Leopard (10.5) running on PowerPC G4 and G5 processors.
 
@@ -30,6 +30,35 @@ This is a working port of llama.cpp for Mac OS X Tiger (10.4) and Leopard (10.5)
 | Phi-2 Q4 | G5 Dual 2.0GHz | ~2-3 t/s |
 
 *It's not fast, but it works!*
+
+## Reproduce these numbers
+
+Everything below is what this repository already documents. Items marked
+"not yet published" are needed for an exact reproduction but are not written
+down anywhere in this repo yet. The throughput figures in the Performance
+table are the author's own single-machine measurements; no one outside Elyan
+Labs has independently reproduced them.
+
+| Item | What is documented |
+|------|--------------------|
+| Hardware | Power Mac G5 Dual 2.0GHz PPC970, 8GB RAM (Leopard 10.5); PowerBook G4 1.67GHz 7447A, 2GB RAM (Tiger 10.4). See "Tested Hardware" above |
+| OS | Mac OS X Tiger 10.4 / Leopard 10.5 |
+| Toolchain | Xcode 2.5 (Tiger) or 3.1 (Leopard), GCC 4.0 or 4.2; GCC 10 from [ppc-tiger-tools](https://github.com/Scottcjn/ppc-tiger-tools) for building CMake; CMake 3.14+ (3.16.9 verified to bootstrap) |
+| Build flags | `cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=ppc -DCMAKE_C_FLAGS="-mcpu=G4 -maltivec -O3" -DCMAKE_CXX_FLAGS="-mcpu=G4 -maltivec -O3"` (use `-mcpu=G5` on G5), then `make -j2` |
+| Models | TinyLlama 1.1B Q4 (the run example names `tinyllama-1.1b-q4_0.gguf`), Phi-2 Q4. Q4_0 is the recommended quant |
+| Command | `./main -m ~/models/tinyllama-1.1b-q4_0.gguf -p "Hello" -n 32 -t 2` |
+| Threads | `-t 2` in the example (one per core); the Known Issues section notes more than 2 threads may not help on G4 |
+| Results | TinyLlama 1.1B Q4: about 3-5 t/s (G5 dual 2.0GHz), about 1-2 t/s (G4 1.67GHz); Phi-2 Q4: about 2-3 t/s (G5) |
+
+Not yet published (gaps for an exact reproduction):
+
+- The exact source commit of `llama.cpp_source` and the compiler version/flags behind each row of the Performance table
+- Which GCC (4.0, 4.2 or 10.x) produced the binary behind each measurement
+- Model download source and file checksums (sha256)
+- The prompt text and generation length used when the t/s figures were taken, and whether t/s is prompt-eval or generation throughput
+- Which OS version each Performance row was measured on
+- Raw logs: none are checked into this repository
+- Whether `-mcpu=G4` or `-mcpu=G5` flags were used for the G5 rows
 
 ## Building on Tiger/Leopard
 
